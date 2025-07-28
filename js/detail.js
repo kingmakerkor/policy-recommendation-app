@@ -39,6 +39,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('detail-name').textContent = policy.name;
             document.getElementById('detail-description').textContent = policy.description;
 
+            // 동적으로 메타 태그 업데이트
+            document.title = `${policy.name} - 정책 상세 정보`;
+            document.querySelector('meta[name="description"]').setAttribute('content', policy.description);
+            document.querySelector('meta[property="og:title"]').setAttribute('content', policy.name);
+            document.querySelector('meta[property="og:description"]').setAttribute('content', policy.description);
+            document.querySelector('meta[property="og:url"]').setAttribute('content', window.location.href);
+
             document.getElementById('detail-age-condition').textContent = 
                 `나이 조건: 만 ${policy.min_age || '-'}세 ~ ${policy.max_age || '-'}세`;
             

@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const xml2js = require('xml2js');
-const cron = require('node-cron'); // node-cron 임포트
+const cron = require('node-cron');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
