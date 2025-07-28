@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정책 상세 정보</title>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .policy-detail-title {
+            color: #007bff;
+            font-weight: 700;
+        }
+        .policy-detail-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        .policy-detail-meta small {
+            display: block;
+            margin-bottom: 5px;
+            color: #6c757d;
+        }
+        .detail-section h6 {
+            color: #007bff;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+        .detail-section p {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-primary text-white text-center py-4">
+        <div class="container">
+            <h1 class="display-5">정책 상세 정보</h1>
+        </div>
+    </header>
+
+    <main class="container my-5">
+        <div class="card p-4">
+            <h2 class="policy-detail-title mb-3" id="detail-name">정책 이름 로딩 중...</h2>
+            <p class="policy-detail-description" id="detail-description">설명 로딩 중...</p>
+            <hr>
+            <div class="policy-detail-meta">
+                <small id="detail-age-condition">나이 조건: 로딩 중...</small>
+                <small id="detail-income-condition">소득 조건: 로딩 중...</small>
+                <small id="detail-region-condition">지역: 로딩 중...</small>
+            </div>
+
+            <div class="detail-section">
+                <h6>담당 부처</h6>
+                <p id="detail-jur-mnof-nm">로딩 중...</p>
+            </div>
+            <div class="detail-section">
+                <h6>담당 조직</h6>
+                <p id="detail-jur-org-nm">로딩 중...</p>
+            </div>
+            <div class="detail-section">
+                <h6>생애주기</h6>
+                <p id="detail-life-array">로딩 중...</p>
+            </div>
+            <div class="detail-section">
+                <h6>온라인 신청 가능 여부</h6>
+                <p id="detail-onap-psblt-yn">로딩 중...</p>
+            </div>
+            <div class="detail-section">
+                <h6>대표 연락처</h6>
+                <p id="detail-rprs-ctadr">로딩 중...</p>
+            </div>
+            <div class="detail-section">
+                <h6>상세 링크</h6>
+                <p><a href="#" id="detail-serv-dtl-link" target="_blank">로딩 중...</a></p>
+            </div>
+            <div class="detail-section">
+                <h6>지원 주기</h6>
+                <p id="detail-sprt-cyc-nm">로딩 중...</p>
+            </div>
+            <div class="detail-section">
+                <h6>제공 형태</h6>
+                <p id="detail-srv-pvsn-nm">로딩 중...</p>
+            </div>
+            <div class="detail-section">
+                <h6>최초 등록일</h6>
+                <p id="detail-svcfrst-reg-ts">로딩 중...</p>
+            </div>
+            <div class="detail-section">
+                <h6>대상자 개인</h6>
+                <p id="detail-trgter-indvdl-array">로딩 중...</p>
+            </div>
+            <div class="detail-section">
+                <h6>조회수</h6>
+                <p id="detail-inq-num">로딩 중...</p>
+            </div>
+            <div class="detail-section">
+                <h6>관심 테마</h6>
+                <p id="detail-intrs-thema-array">로딩 중...</p>
+            </div>
+
+            <div class="mt-4">
+                <a href="index.html" class="btn btn-secondary">목록으로 돌아가기</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS for detail page -->
+    <script type="module" src="js/detail.js"></script>
+</body>
+</html>

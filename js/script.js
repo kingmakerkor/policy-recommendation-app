@@ -6,11 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const regionInput = document.getElementById('region');
     const keywordInput = document.getElementById('keyword');
     const loadingSpinner = document.getElementById('loading-spinner');
+    const resetFormBtn = document.getElementById('reset-form-btn');
+    const sortBySelect = document.getElementById('sort-by');
 
     const ageFeedback = document.getElementById('age-feedback');
     const incomeFeedback = document.getElementById('income-feedback');
 
-    // 유효성 검사 피드백 초기화 함수
+    let currentPolicies = [];
+
     function resetValidationFeedback() {
         ageInput.classList.remove('is-invalid');
         ageFeedback.textContent = '';
@@ -18,10 +21,25 @@ document.addEventListener('DOMContentLoaded', () => {
         incomeFeedback.textContent = '';
     }
 
+    function resetForm() {
+        policyForm.reset();
+        resetValidationFeedback();
+        policyList.innerHTML = '';
+        loadingSpinner.style.display = 'none';
+        sortBySelect.value = 'default';
+        currentPolicies = [];
+    }
+
+    resetFormBtn.addEventListener('click', resetForm);
+
+    sortBySelect.addEventListener('change', () => {
+        sortAndDisplayPolicies(currentPolicies, sortBySelect.value);
+    });
+
     policyForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        resetValidationFeedback(); // 새로운 제출 시 유효성 검사 피드백 초기화
+        resetValidationFeedback();
 
         const age = parseInt(ageInput.value, 10);
         const income = parseInt(incomeInput.value, 10);
@@ -43,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!isValid) {
-            return; // 유효성 검사 실패 시 함수 종료
+            return;
         }
 
         policyList.innerHTML = '';
@@ -82,7 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return ageMatch && incomeMatch && regionMatch && keywordMatch;
             });
 
-            displayResults(filteredPolicies);
+            currentPolicies = filteredPolicies;
+            sortAndDisplayPolicies(currentPolicies, sortBySelect.value);
 
         } catch (error) {
             console.error('Error:', error);
@@ -91,6 +110,29 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingSpinner.style.display = 'none';
         }
     });
+
+    function sortAndDisplayPolicies(policies, sortBy) {
+        let sortedPolicies = [...policies];
+
+        switch (sortBy) {
+            case 'name-asc':
+                sortedPolicies.sort((a, b) => a.name.localeCompare(b.name));
+                break;
+            case 'name-desc':
+                sortedPolicies.sort((a, b) => b.name.localeCompare(a.name));
+                break;
+            case 'age-asc':
+                sortedPolicies.sort((a, b) => (a.min_age || 0) - (b.min_age || 0));
+                break;
+            case 'age-desc':
+                sortedPolicies.sort((a, b) => (b.min_age || 0) - (a.min_age || 0));
+                break;
+            case 'default':
+            default:
+                break;
+        }
+        displayResults(sortedPolicies);
+    }
 
     function displayResults(policies) {
         policyList.innerHTML = '';
@@ -107,8 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         policies.forEach(policy => {
-            const policyElement = document.createElement('div');
-            policyElement.className = 'list-group-item';
+            const policyElement = document.createElement('a');
+            policyElement.href = `detail.html?id=${policy.id}`;
+            policyElement.className = 'list-group-item list-group-item-action';
 
             let incomeCondition = '';
             if (policy.min_income !== undefined || policy.max_income !== undefined) {
@@ -128,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             policyElement.innerHTML = `
                 <h5 class="mb-1">${policy.name}</h5>
-                <p class="mb-1">${policy.description}</p>
+                <p class="mb-1">${policy.description}</p> <!-- description은 이제 servDgst만 포함 -->
                 <small>나이 조건: 만 ${policy.min_age}세 ~ ${policy.max_age}세${incomeCondition}${regionCondition}</small>
             `;
             policyList.appendChild(policyElement);

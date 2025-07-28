@@ -11,6 +11,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const policyListDiv = document.getElementById('policy-list');
     const cancelEditButton = document.getElementById('cancel-edit');
 
+    // 새로 추가된 입력 필드 요소들
+    const policyJurMnofNmInput = document.getElementById('policy-jur-mnof-nm');
+    const policyJurOrgNmInput = document.getElementById('policy-jur-org-nm');
+    const policyLifeArrayInput = document.getElementById('policy-life-array');
+    const policyOnapPsbltYnInput = document.getElementById('policy-onap-psblt-yn');
+    const policyRprsCtadrInput = document.getElementById('policy-rprs-ctadr');
+    const policyServDtlLinkInput = document.getElementById('policy-serv-dtl-link');
+    const policySprtCycNmInput = document.getElementById('policy-sprt-cyc-nm');
+    const policySrvPvsnNmInput = document.getElementById('policy-srv-pvsn-nm');
+    const policySvcfrstRegTsInput = document.getElementById('policy-svcfrst-reg-ts');
+    const policyTrgterIndvdlArrayInput = document.getElementById('policy-trgter-indvdl-array');
+    const policyInqNumInput = document.getElementById('policy-inq-num');
+    const policyIntrsThemaArrayInput = document.getElementById('policy-intrs-thema-array');
+
     let editingPolicyId = null;
 
     // 정책 목록 불러오기
@@ -44,6 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         나이: ${policy.min_age || '-'} ~ ${policy.max_age || '-'}세
                         ${(policy.min_income !== undefined || policy.max_income !== undefined) ? ` | 소득: ${policy.min_income || '-'} ~ ${policy.max_income || '-'}만원` : ''}
                         ${(policy.region && policy.region.length > 0) ? ` | 지역: ${policy.region.join(', ')}` : ''}
+                        <br>
+                        담당부처: ${policy.jur_mnof_nm || '-'} | 생애주기: ${policy.life_array || '-'} | 대상: ${policy.trgter_indvdl_array || '-'}
+                        <br>
+                        상세링크: <a href="${policy.serv_dtl_link}" target="_blank">${policy.serv_dtl_link || '-'}</a>
                     </small>
                 </div>
                 <div class="policy-actions">
@@ -68,20 +86,34 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
 
         const policyData = {
+            id: policyIdInput.value || undefined, // ID가 없으면 Supabase가 자동 생성 (text 타입이므로 직접 지정)
             name: policyNameInput.value,
             description: policyDescriptionInput.value,
-            min_age: policyMinAgeInput.value ? parseInt(policyMinAgeInput.value, 10) : undefined,
-            max_age: policyMaxAgeInput.value ? parseInt(policyMaxAgeInput.value, 10) : undefined,
-            min_income: policyMinIncomeInput.value ? parseInt(policyMinIncomeInput.value, 10) : undefined,
-            max_income: policyMaxIncomeInput.value ? parseInt(policyMaxIncomeInput.value, 10) : undefined,
-            region: policyRegionInput.value ? policyRegionInput.value.split(',').map(r => r.trim()) : undefined
+            min_age: policyMinAgeInput.value ? parseInt(policyMinAgeInput.value, 10) : null,
+            max_age: policyMaxAgeInput.value ? parseInt(policyMaxAgeInput.value, 10) : null,
+            min_income: policyMinIncomeInput.value ? parseInt(policyMinIncomeInput.value, 10) : null,
+            max_income: policyMaxIncomeInput.value ? parseInt(policyMaxIncomeInput.value, 10) : null,
+            region: policyRegionInput.value ? policyRegionInput.value.split(',').map(r => r.trim()) : null,
+            // 새로 추가된 필드들
+            jur_mnof_nm: policyJurMnofNmInput.value || null,
+            jur_org_nm: policyJurOrgNmInput.value || null,
+            life_array: policyLifeArrayInput.value || null,
+            onap_psblt_yn: policyOnapPsbltYnInput.value || null,
+            rprs_ctadr: policyRprsCtadrInput.value || null,
+            serv_dtl_link: policyServDtlLinkInput.value || null,
+            sprt_cyc_nm: policySprtCycNmInput.value || null,
+            srv_pvsn_nm: policySrvPvsnNmInput.value || null,
+            svcfrst_reg_ts: policySvcfrstRegTsInput.value || null,
+            trgter_indvdl_array: policyTrgterIndvdlArrayInput.value || null,
+            inq_num: policyInqNumInput.value ? parseInt(policyInqNumInput.value, 10) : null,
+            intrs_thema_array: policyIntrsThemaArrayInput.value || null
         };
 
         try {
             let response;
             if (editingPolicyId) {
                 // 수정
-                response = await fetch(`/api/policies/${editingPolicyId}`, {
+                response = await fetch(`/api/policies/${editingEditingPolicyId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(policyData)
@@ -96,7 +128,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (!response.ok) {
-                throw new Error('정책 저장에 실패했습니다.');
+                const errorData = await response.json();
+                throw new Error(errorData.message || '정책 저장에 실패했습니다.');
             }
 
             resetForm();
@@ -113,12 +146,25 @@ document.addEventListener('DOMContentLoaded', () => {
         policyIdInput.value = '';
         editingPolicyId = null;
         cancelEditButton.style.display = 'none';
+        // 새로 추가된 입력 필드 초기화
+        policyJurMnofNmInput.value = '';
+        policyJurOrgNmInput.value = '';
+        policyLifeArrayInput.value = '';
+        policyOnapPsbltYnInput.value = '';
+        policyRprsCtadrInput.value = '';
+        policyServDtlLinkInput.value = '';
+        policySprtCycNmInput.value = '';
+        policySrvPvsnNmInput.value = '';
+        policySvcfrstRegTsInput.value = '';
+        policyTrgterIndvdlArrayInput.value = '';
+        policyInqNumInput.value = '';
+        policyIntrsThemaArrayInput.value = '';
     }
 
     // 정책 수정 모드
     async function editPolicy(id) {
-        const policies = await (await fetch('/api/policies')).json();
-        const policyToEdit = policies.find(p => p.id === parseInt(id));
+        const response = await fetch(`/api/policies/${id}`); // 특정 정책 가져오는 API 사용
+        const policyToEdit = await response.json();
 
         if (policyToEdit) {
             editingPolicyId = policyToEdit.id;
@@ -129,8 +175,25 @@ document.addEventListener('DOMContentLoaded', () => {
             policyMaxAgeInput.value = policyToEdit.max_age || '';
             policyMinIncomeInput.value = policyToEdit.min_income || '';
             policyMaxIncomeInput.value = policyToEdit.max_income || '';
-            policyRegionInput.value = policyToEdit.region ? policyToEdit.region.join(', ') : '';
+            policyRegionInput.value = policyToEdit.region ? policyToEdit.region.join(',') : '';
             cancelEditButton.style.display = 'inline-block';
+
+            // 새로 추가된 필드 값 채우기
+            policyJurMnofNmInput.value = policyToEdit.jur_mnof_nm || '';
+            policyJurOrgNmInput.value = policyToEdit.jur_org_nm || '';
+            policyLifeArrayInput.value = policyToEdit.life_array || '';
+            policyOnapPsbltYnInput.value = policyToEdit.onap_psblt_yn || '';
+            policyRprsCtadrInput.value = policyToEdit.rprs_ctadr || '';
+            policyServDtlLinkInput.value = policyToEdit.serv_dtl_link || '';
+            policySprtCycNmInput.value = policyToEdit.sprt_cyc_nm || '';
+            policySrvPvsnNmInput.value = policyToEdit.srv_pvsn_nm || '';
+            policySvcfrstRegTsInput.value = policyToEdit.svcfrst_reg_ts || '';
+            policyTrgterIndvdlArrayInput.value = policyToEdit.trgter_indvdl_array || '';
+            policyInqNumInput.value = policyToEdit.inq_num || '';
+            policyIntrsThemaArrayInput.value = policyToEdit.intrs_thema_array || '';
+
+        } else {
+            alert('정책을 찾을 수 없습니다.');
         }
     }
 
@@ -146,7 +209,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (!response.ok) {
-                    throw new Error('정책 삭제에 실패했습니다.');
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || '정책 삭제에 실패했습니다.');
                 }
                 fetchPolicies();
             } catch (error) {
