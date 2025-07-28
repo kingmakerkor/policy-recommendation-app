@@ -148,7 +148,11 @@ const updatePoliciesFromApi = async () => {
                 svcfrst_reg_ts: item.svcfrstRegTs || null,
                 trgter_indvdl_array: item.trgterIndvdlArray ? item.trgterIndvdlArray.split(',').map(code => trgterIndvdlArrayMap[code.trim()] || code.trim()).join(',') : null,
                 inq_num: item.inqNum || null,
-                intrs_thema_array: item.intrsThemaArray || null
+                intrs_thema_array: item.intrsThemaArray || null,
+                // 새로 추가된 상세 필드들
+                tgtr_dtl_cn: item.tgtrDtlCn || null,
+                slct_crit_cn: item.slctCritCn || null,
+                alw_serv_cn: item.alwServCn || null
             }));
         } else {
             console.warn('API 응답에서 정책 데이터를 찾을 수 없습니다:', result);
@@ -219,6 +223,31 @@ cron.schedule('0 3 * * *', async () => {
 }, {
     scheduled: true,
     timezone: "Asia/Seoul" // 한국 시간대 설정
+});
+
+// sitemap.xml 동적 생성 엔드포인트
+app.get('/sitemap.xml', async (req, res) => {
+    try {
+        const policies = await readPolicies(); // Supabase에서 모든 정책 가져오기
+        let sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+        // 기본 페이지 추가
+        sitemap += `  <url>\n    <loc>https://your-website-url.com/index.html</loc>\n    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n`;
+
+        // 각 정책 상세 페이지 추가
+        policies.forEach(policy => {
+            sitemap += `  <url>\n    <loc>https://your-website-url.com/detail.html?id=${policy.id}</loc>\n    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+        });
+
+        sitemap += `</urlset>`;
+
+        res.header('Content-Type', 'application/xml');
+        res.send(sitemap);
+
+    } catch (error) {
+        console.error('Error generating sitemap:', error);
+        res.status(500).send('Error generating sitemap');
+    }
 });
 
 // 서버 시작

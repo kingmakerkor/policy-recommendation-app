@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        // Supabase에서 특정 ID의 정책을 직접 가져오도록 변경
         const { data: policy, error } = await supabase
             .from('policies')
             .select('*')
@@ -89,6 +88,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('detail-trgter-indvdl-array').textContent = policy.trgter_indvdl_array || '-';
             document.getElementById('detail-inq-num').textContent = policy.inq_num || '-';
             document.getElementById('detail-intrs-thema-array').textContent = policy.intrs_thema_array || '-';
+
+            // 새로 추가된 상세 내용 필드 채우기
+            document.getElementById('detail-tgtr-dtl-cn').textContent = policy.tgtr_dtl_cn || '-';
+            document.getElementById('detail-slct-crit-cn').textContent = policy.slct_crit_cn || '-';
+            document.getElementById('detail-alw-serv-cn').textContent = policy.alw_serv_cn || '-';
 
         } else {
             document.getElementById('detail-name').textContent = '정책을 찾을 수 없습니다.';
