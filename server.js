@@ -232,11 +232,23 @@ app.get('/sitemap.xml', async (req, res) => {
         let sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
         // 기본 페이지 추가
-        sitemap += `  <url>\n    <loc>https://your-website-url.com/index.html</loc>\n    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n`;
+        sitemap += `  <url>
+    <loc>https://policy-recommendation-app.onrender.com/index.html</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+`;
 
         // 각 정책 상세 페이지 추가
         policies.forEach(policy => {
-            sitemap += `  <url>\n    <loc>https://your-website-url.com/detail.html?id=${policy.id}</loc>\n    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+            sitemap += `  <url>
+    <loc>https://policy-recommendation-app.onrender.com/detail.html?id=${policy.id}</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+`;
         });
 
         sitemap += `</urlset>`;
