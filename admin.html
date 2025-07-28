@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정책 관리자 페이지</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 30px;
+        }
+        .card {
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .policy-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .policy-item:last-child {
+            border-bottom: none;
+        }
+        .policy-actions button {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4 text-center">정책 관리자 페이지</h1>
+
+        <div class="card p-4">
+            <h2 class="card-title mb-4">정책 추가/수정</h2>
+            <form id="policy-form">
+                <input type="hidden" id="policy-id">
+                <div class="mb-3">
+                    <label for="policy-name" class="form-label">정책 이름</label>
+                    <input type="text" class="form-control" id="policy-name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="policy-description" class="form-label">설명</label>
+                    <textarea class="form-control" id="policy-description" rows="3" required></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="policy-min-age" class="form-label">최소 나이</label>
+                        <input type="number" class="form-control" id="policy-min-age">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="policy-max-age" class="form-label">최대 나이</label>
+                        <input type="number" class="form-control" id="policy-max-age">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="policy-min-income" class="form-label">최소 소득 (만원)</label>
+                        <input type="number" class="form-control" id="policy-min-income">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="policy-max-income" class="form-label">최대 소득 (만원)</label>
+                        <input type="number" class="form-control" id="policy-max-income">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="policy-region" class="form-label">지역 (쉼표로 구분, 예: 서울,경기)</label>
+                    <input type="text" class="form-control" id="policy-region">
+                </div>
+                <button type="submit" class="btn btn-primary">저장</button>
+                <button type="button" class="btn btn-secondary" id="cancel-edit" style="display:none;">취소</button>
+            </form>
+        </div>
+
+        <div class="card p-4">
+            <h2 class="card-title mb-4">정책 목록</h2>
+            <div id="policy-list" class="list-group">
+                <!-- 정책 목록이 여기에 로드됩니다 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="js/admin.js"></script>
+</body>
+</html>

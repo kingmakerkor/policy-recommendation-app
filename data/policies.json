@@ -1,0 +1,50 @@
+[
+    {
+        "id": 1,
+        "name": "청년 월세 지원",
+        "description": "만 19세 이상 39세 이하 청년에게 월 20만원씩 최대 12개월간 월세를 지원합니다.",
+        "min_age": 19,
+        "max_age": 39,
+        "min_income": 0,
+        "max_income": 350,
+        "region": ["서울", "경기", "인천"]
+    },
+    {
+        "id": 2,
+        "name": "청년내일채움공제",
+        "description": "중소기업에 취업한 청년의 장기근속을 지원하기 위해 정부와 기업이 함께 적립하여 만기 시 목돈을 지급합니다.",
+        "min_age": 15,
+        "max_age": 34,
+        "min_income": 0,
+        "max_income": 500
+    },
+    {
+        "id": 3,
+        "name": "국민취업지원제도",
+        "description": "저소득 구직자, 청년 등 취업취약계층에게 취업지원서비스와 생계안정을 동시에 지원합니다.",
+        "min_age": 15,
+        "max_age": 69,
+        "min_income": 0,
+        "max_income": 250
+    },
+    {
+        "id": 4,
+        "name": "신혼부부 전세자금 대출",
+        "description": "신혼부부의 주거 안정을 위한 전세자금 대출을 지원합니다.",
+        "min_age": 19,
+        "max_age": 99,
+        "min_income": 300,
+        "max_income": 700,
+        "region": ["전국"]
+    },
+    {
+        "id": 5,
+        "name": "서울시 청년수당",
+        "description": "구직활동을 하는 서울시 청년에게 월 50만원씩 최대 6개월간 지원합니다.",
+        "min_age": 19,
+        "max_age": 34,
+        "min_income": 0,
+        "max_income": 200,
+        "region": ["서울"]
+    }
+]
