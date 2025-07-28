@@ -262,6 +262,22 @@ app.get('/sitemap.xml', async (req, res) => {
     }
 });
 
+// robots.txt 파일 제공 엔드포인트 추가
+app.get('/robots.txt', (req, res) => {
+    const robotsTxtContent = `User-agent: *
+Allow: /
+
+# 관리자 페이지는 검색 엔진에 노출되지 않도록 합니다.
+Disallow: /admin.html
+Disallow: /js/admin.js
+Disallow: /api/
+
+Sitemap: https://policy-recommendation-app.onrender.com/sitemap.xml
+`;
+    res.header('Content-Type', 'text/plain');
+    res.send(robotsTxtContent);
+});
+
 // 서버 시작
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
