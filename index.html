@@ -36,22 +36,48 @@
             <h2 class="card-title mb-4">내 정보 입력하기</h2>
             <form id="policy-form">
                 <div class="mb-3">
-                    <label for="age" class="form-label">나이</label>
-                    <input type="number" class="form-control" id="age" placeholder="만 나이를 입력하세요" required>
-                    <div class="invalid-feedback" id="age-feedback"></div>
+                    <label for="life-array" class="form-label">생애주기</label>
+                    <select class="form-select" id="life-array">
+                        <option value="">선택 안 함</option>
+                        <option value="001">영유아</option>
+                        <option value="002">아동</option>
+                        <option value="003">청소년</option>
+                        <option value="004">청년</option>
+                        <option value="005">중장년</option>
+                        <option value="006">노년</option>
+                        <option value="007">임신·출산</option>
+                    </select>
                 </div>
                 <div class="mb-3">
-                    <label for="income" class="form-label">월 소득 (세전, 만원 단위)</label>
-                    <input type="number" class="form-control" id="income" placeholder="월 소득을 만원 단위로 입력하세요 (예: 300)" required>
-                    <div class="invalid-feedback" id="income-feedback"></div>
+                    <label for="trgter-indvdl-array" class="form-label">가구유형</label>
+                    <select class="form-select" id="trgter-indvdl-array">
+                        <option value="">선택 안 함</option>
+                        <option value="010">다문화·탈북민</option>
+                        <option value="020">다자녀</option>
+                        <option value="030">보훈대상자</option>
+                        <option value="040">장애인</option>
+                        <option value="050">저소득</option>
+                        <option value="060">한부모·조손</option>
+                    </select>
                 </div>
                 <div class="mb-3">
-                    <label for="region" class="form-label">거주 지역 (시/도 단위, 예: 서울, 경기)</label>
-                    <input type="text" class="form-control" id="region" placeholder="거주 지역을 입력하세요">
-                </div>
-                <div class="mb-3">
-                    <label for="keyword" class="form-label">키워드 검색 (예: 창업, 주거)</label>
-                    <input type="text" class="form-control" id="keyword" placeholder="정책 이름이나 설명에서 찾을 키워드를 입력하세요">
+                    <label for="intrs-thema-array" class="form-label">관심주제</label>
+                    <select class="form-select" id="intrs-thema-array">
+                        <option value="">선택 안 함</option>
+                        <option value="001">신체건강</option>
+                        <option value="002">정신건강</option>
+                        <option value="003">생활지원</option>
+                        <option value="004">주거</option>
+                        <option value="005">일자리</option>
+                        <option value="006">문화·여가</option>
+                        <option value="007">교육</option>
+                        <option value="008">안전·위기</option>
+                        <option value="009">보호·돌봄</option>
+                        <option value="010">법률</option>
+                        <option value="011">서민금융</option>
+                        <option value="012">보육</option>
+                        <option value="013">에너지</option>
+                    </select>
                 </div>
                 <!-- 추가 필드는 여기에 삽입됩니다 -->
                 <div class="row mt-4">

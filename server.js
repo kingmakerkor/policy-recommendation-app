@@ -262,8 +262,8 @@ Disallow: /admin.html
 Disallow: /js/admin.js
 Disallow: /api/
 
-Sitemap: https://policy-recommendation-app.onrender.com/sitemap.xml
-`;
+Sitemap: https://policy-recommendation-app.onrender.com/sitemap.xml`;
+
     res.header('Content-Type', 'text/plain');
     res.send(robotsTxtContent);
 });

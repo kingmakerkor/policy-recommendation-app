@@ -1,29 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
     const policyForm = document.getElementById('policy-form');
     const policyList = document.getElementById('policy-list');
-    const ageInput = document.getElementById('age');
-    const incomeInput = document.getElementById('income');
-    const regionInput = document.getElementById('region');
-    const keywordInput = document.getElementById('keyword');
+    const lifeArraySelect = document.getElementById('life-array'); // 생애주기 select
+    const trgterIndvdlArraySelect = document.getElementById('trgter-indvdl-array'); // 가구유형 select
+    const intrsThemaArraySelect = document.getElementById('intrs-thema-array'); // 관심주제 select
     const loadingSpinner = document.getElementById('loading-spinner');
     const resetFormBtn = document.getElementById('reset-form-btn');
     const sortBySelect = document.getElementById('sort-by');
 
-    const ageFeedback = document.getElementById('age-feedback');
-    const incomeFeedback = document.getElementById('income-feedback');
+    // 기존 나이/소득 피드백은 더 이상 사용하지 않으므로 제거
+    // const ageFeedback = document.getElementById('age-feedback');
+    // const incomeFeedback = document.getElementById('income-feedback');
 
     let currentPolicies = [];
 
+    // 유효성 검사 피드백 초기화 함수 (이제 필요 없음)
     function resetValidationFeedback() {
-        ageInput.classList.remove('is-invalid');
-        ageFeedback.textContent = '';
-        incomeInput.classList.remove('is-invalid');
-        incomeFeedback.textContent = '';
+        // ageInput.classList.remove('is-invalid');
+        // ageFeedback.textContent = '';
+        // incomeInput.classList.remove('is-invalid');
+        // incomeFeedback.textContent = '';
     }
 
     function resetForm() {
         policyForm.reset();
-        resetValidationFeedback();
+        // resetValidationFeedback(); // 이제 필요 없음
         policyList.innerHTML = '';
         loadingSpinner.style.display = 'none';
         sortBySelect.value = 'default';
@@ -39,30 +40,11 @@ document.addEventListener('DOMContentLoaded', () => {
     policyForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        resetValidationFeedback();
+        // resetValidationFeedback(); // 이제 필요 없음
 
-        const age = parseInt(ageInput.value, 10);
-        const income = parseInt(incomeInput.value, 10);
-        const region = regionInput.value.trim();
-        const keyword = keywordInput.value.trim().toLowerCase();
-
-        let isValid = true;
-
-        if (isNaN(age) || age < 0) {
-            ageInput.classList.add('is-invalid');
-            ageFeedback.textContent = '나이를 정확한 숫자로 입력해주세요. (0 이상)';
-            isValid = false;
-        }
-
-        if (isNaN(income) || income < 0) {
-            incomeInput.classList.add('is-invalid');
-            incomeFeedback.textContent = '월 소득을 정확한 숫자로 입력해주세요. (0 이상)';
-            isValid = false;
-        }
-
-        if (!isValid) {
-            return;
-        }
+        const selectedLifeArray = lifeArraySelect.value; // 생애주기 값
+        const selectedTrgterIndvdlArray = trgterIndvdlArraySelect.value; // 가구유형 값
+        const selectedIntrsThemaArray = intrsThemaArraySelect.value; // 관심주제 값
 
         policyList.innerHTML = '';
         loadingSpinner.style.display = 'block';
@@ -75,29 +57,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const policies = await response.json();
 
             const filteredPolicies = policies.filter(policy => {
-                const ageMatch = age >= policy.min_age && age <= policy.max_age;
-                const incomeMatch = (policy.min_income === undefined || income >= policy.min_income) &&
-                                    (policy.max_income === undefined || income <= policy.max_income);
-
-                let regionMatch = true;
-                if (policy.region && policy.region.length > 0) {
-                    if (!policy.region.includes("전국")) {
-                        if (region) {
-                            regionMatch = policy.region.some(r => r.trim().toLowerCase() === region.toLowerCase());
-                        } else {
-                            regionMatch = false;
-                        }
-                    }
+                let lifeArrayMatch = true;
+                if (selectedLifeArray) {
+                    // 정책의 life_array가 쉼표로 구분된 문자열이므로, 배열로 변환하여 포함 여부 확인
+                    const policyLifeArrays = policy.life_array ? policy.life_array.split(',').map(s => s.trim()) : [];
+                    lifeArrayMatch = policyLifeArrays.includes(lifeArrayMap[selectedLifeArray]);
                 }
 
-                let keywordMatch = true;
-                if (keyword) {
-                    const policyName = policy.name ? policy.name.toLowerCase() : '';
-                    const policyDescription = policy.description ? policy.description.toLowerCase() : '';
-                    keywordMatch = policyName.includes(keyword) || policyDescription.includes(keyword);
+                let trgterIndvdlArrayMatch = true;
+                if (selectedTrgterIndvdlArray) {
+                    const policyTrgterIndvdlArrays = policy.trgter_indvdl_array ? policy.trgter_indvdl_array.split(',').map(s => s.trim()) : [];
+                    trgterIndvdlArrayMatch = policyTrgterIndvdlArrays.includes(trgterIndvdlArrayMap[selectedTrgterIndvdlArray]);
                 }
 
-                return ageMatch && incomeMatch && regionMatch && keywordMatch;
+                let intrsThemaArrayMatch = true;
+                if (selectedIntrsThemaArray) {
+                    const policyIntrsThemaArrays = policy.intrs_thema_array ? policy.intrs_thema_array.split(',').map(s => s.trim()) : [];
+                    intrsThemaArrayMatch = policyIntrsThemaArrays.includes(intrsThemaArrayMap[selectedIntrsThemaArray]);
+                }
+
+                // 모든 조건이 만족해야 함
+                return lifeArrayMatch && trgterIndvdlArrayMatch && intrsThemaArrayMatch;
             });
 
             currentPolicies = filteredPolicies;
@@ -141,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
             policyList.innerHTML = `
                 <div class="list-group-item text-center py-4">
                     <p class="lead mb-3">아쉽지만, 현재 조건에 맞는 정책이 없습니다.</p>
-                    <p>다른 나이, 소득, 지역 또는 키워드로 다시 검색해보세요!</p>
+                    <p>다른 생애주기, 가구유형, 관심주제로 다시 검색해보세요!</p>
                     <p>혹은 <a href="admin.html">관리자 페이지</a>에서 새로운 정책을 추가할 수 있습니다.</p>
                 </div>
             `;
@@ -153,26 +133,17 @@ document.addEventListener('DOMContentLoaded', () => {
             policyElement.href = `detail.html?id=${policy.id}`;
             policyElement.className = 'list-group-item list-group-item-action';
 
-            let incomeCondition = '';
-            if (policy.min_income !== undefined || policy.max_income !== undefined) {
-                incomeCondition = ` | 소득 조건: `;
-                if (policy.min_income !== undefined) {
-                    incomeCondition += `월 ${policy.min_income}만원 이상 `;
-                }
-                if (policy.max_income !== undefined) {
-                    incomeCondition += `월 ${policy.max_income}만원 이하`;
-                }
-            }
-
-            let regionCondition = '';
-            if (policy.region && policy.region.length > 0) {
-                regionCondition = ` | 지역: ${policy.region.join(', ')}`;
+            // min_age, max_age, min_income, max_income, region은 이제 API에서 직접 제공되지 않으므로 표시하지 않음
+            // 대신 life_array, trgter_indvdl_array, intrs_thema_array를 표시
+            let lifeTrgterThemaInfo = '';
+            if (policy.life_array || policy.trgter_indvdl_array || policy.intrs_thema_array) {
+                lifeTrgterThemaInfo += `대상: ${policy.trgter_indvdl_array || '-'} | 생애주기: ${policy.life_array || '-'} | 관심주제: ${policy.intrs_thema_array || '-'}`;
             }
 
             policyElement.innerHTML = `
                 <h5 class="mb-1">${policy.name}</h5>
-                <p class="mb-1">${policy.description}</p> <!-- description은 이제 servDgst만 포함 -->
-                <small>나이 조건: 만 ${policy.min_age}세 ~ ${policy.max_age}세${incomeCondition}${regionCondition}</small>
+                <p class="mb-1">${policy.description}</p>
+                <small>${lifeTrgterThemaInfo}</small>
             `;
             policyList.appendChild(policyElement);
         });
