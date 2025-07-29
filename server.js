@@ -21,6 +21,7 @@ const readPolicies = async () => {
     const { data, error } = await supabase
         .from('policies')
         .select('*');
+
     if (error) {
         console.error('Error reading policies from Supabase:', error);
         return [];
@@ -54,7 +55,6 @@ app.post('/api/policies', async (req, res) => {
 app.put('/api/policies/:id', async (req, res) => {
     const policyId = req.params.id;
     const updatedPolicy = req.body;
-
     const { data, error } = await supabase
         .from('policies')
         .update(updatedPolicy)
@@ -65,6 +65,7 @@ app.put('/api/policies/:id', async (req, res) => {
         console.error('Error updating policy in Supabase:', error);
         return res.status(500).json({ message: '정책 수정 중 오류가 발생했습니다.', error: error.message });
     }
+
     if (data.length === 0) {
         return res.status(404).send('Policy not found');
     }
@@ -73,7 +74,6 @@ app.put('/api/policies/:id', async (req, res) => {
 
 app.delete('/api/policies/:id', async (req, res) => {
     const policyId = req.params.id;
-
     const { error } = await supabase
         .from('policies')
         .delete()
@@ -108,7 +108,7 @@ const trgterIndvdlArrayMap = {
 
 // API 업데이트 함수 (스케줄링을 위해 별도 함수로 분리)
 const updatePoliciesFromApi = async () => {
-    const serviceKey = process.env.WELFARE_API_KEY; 
+    const serviceKey = process.env.WELFARE_API_KEY;
     if (!serviceKey) {
         console.error('WELFARE_API_KEY 환경 변수가 설정되지 않았습니다. 정책 업데이트를 건너뜁니다.');
         return { message: 'WELFARE_API_KEY 환경 변수가 설정되지 않았습니다.' };
@@ -119,23 +119,20 @@ const updatePoliciesFromApi = async () => {
     try {
         const apiResponse = await axios.get(apiUrl);
         const xmlData = apiResponse.data;
-
         const parser = new xml2js.Parser({ explicitArray: false });
         const result = await parser.parseStringPromise(xmlData);
 
         let newPoliciesFromApi = [];
-
         if (result && result.wantedList && result.wantedList.servList) {
             const items = Array.isArray(result.wantedList.servList) ? result.wantedList.servList : [result.wantedList.servList];
-            
             newPoliciesFromApi = items.map(item => ({
-                id: item.servId, 
-                name: item.servNm, 
+                id: item.servId,
+                name: item.servNm,
                 description: item.servDgst || item.servNm, // servDgst만 사용
-                min_age: 0, 
-                max_age: 100, 
-                min_income: 0, 
-                max_income: 9999, 
+                min_age: 0,
+                max_age: 100,
+                min_income: 0,
+                max_income: 9999,
                 region: ['전국'],
                 jur_mnof_nm: item.jurMnofNm || null,
                 jur_org_nm: item.jurOrgNm || null,
@@ -169,7 +166,7 @@ const updatePoliciesFromApi = async () => {
                 .eq('id', apiPolicy.id)
                 .single();
 
-            if (selectError && selectError.code !== 'PGRST116') {
+            if (selectError && selectError.code !== 'PGRST116') { // PGRST116 means no rows found
                 console.error('Error checking existing policy in Supabase:', selectError);
                 continue;
             }
@@ -195,13 +192,8 @@ const updatePoliciesFromApi = async () => {
                 }
             }
         }
-        
         console.log(`API 업데이트 완료: ${addedCount}개 정책 추가, ${updatedCount}개 정책 업데이트.`);
-        return { 
-            message: 'API 연동을 통한 정책 업데이트가 완료되었습니다.', 
-            addedCount: addedCount, 
-            updatedCount: updatedCount 
-        };
+        return { message: 'API 연동을 통한 정책 업데이트가 완료되었습니다.', addedCount: addedCount, updatedCount: updatedCount };
 
     } catch (error) {
         console.error('Error during API update:', error);
@@ -229,33 +221,32 @@ cron.schedule('0 3 * * *', async () => {
 app.get('/sitemap.xml', async (req, res) => {
     try {
         const policies = await readPolicies(); // Supabase에서 모든 정책 가져오기
-        let sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
-        // 기본 페이지 추가
-        sitemap += `  <url>
-    <loc>https://policy-recommendation-app.onrender.com/index.html</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-`;
+        let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://policy-recommendation-app.onrender.com/index.html</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>`;
 
         // 각 정책 상세 페이지 추가
         policies.forEach(policy => {
-            sitemap += `  <url>
-    <loc>https://policy-recommendation-app.onrender.com/detail.html?id=${policy.id}</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-`;
+            sitemap += `
+    <url>
+        <loc>https://policy-recommendation-app.onrender.com/detail.html?id=${policy.id}</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>`;
         });
 
-        sitemap += `</urlset>`;
+        sitemap += `
+</urlset>`;
 
         res.header('Content-Type', 'application/xml');
         res.send(sitemap);
-
     } catch (error) {
         console.error('Error generating sitemap:', error);
         res.status(500).send('Error generating sitemap');
@@ -266,7 +257,6 @@ app.get('/sitemap.xml', async (req, res) => {
 app.get('/robots.txt', (req, res) => {
     const robotsTxtContent = `User-agent: *
 Allow: /
-
 # 관리자 페이지는 검색 엔진에 노출되지 않도록 합니다.
 Disallow: /admin.html
 Disallow: /js/admin.js
