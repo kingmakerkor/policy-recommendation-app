@@ -126,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
             policyElement.className = 'list-group-item list-group-item-action';
 
             let lifeTrgterThemaInfo = '';
+            // life_array, trgter_indvdl_array, intrs_thema_array가 배열이 아닌 문자열이므로 직접 사용
             if (policy.life_array || policy.trgter_indvdl_array || policy.intrs_thema_array) {
                 lifeTrgterThemaInfo += `대상: ${policy.trgter_indvdl_array || '-'} | 생애주기: ${policy.life_array || '-'} | 관심주제: ${policy.intrs_thema_array || '-'}`;
             }
