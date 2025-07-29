@@ -25,6 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const policyInqNumInput = document.getElementById('policy-inq-num');
     const policyIntrsThemaArrayInput = document.getElementById('policy-intrs-thema-array');
 
+    // 새로 추가된 상세 내용 필드 요소들
+    const policyTgtrDtlCnInput = document.getElementById('policy-tgtr-dtl-cn');
+    const policySlctCritCnInput = document.getElementById('policy-slct-crit-cn');
+    const policyAlwServCnInput = document.getElementById('policy-alw-serv-cn');
+
     let editingPolicyId = null;
 
     // 정책 목록 불러오기
@@ -62,6 +67,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         담당부처: ${policy.jur_mnof_nm || '-'} | 생애주기: ${policy.life_array || '-'} | 대상: ${policy.trgter_indvdl_array || '-'}
                         <br>
                         상세링크: <a href="${policy.serv_dtl_link}" target="_blank">${policy.serv_dtl_link || '-'}</a>
+                        <br>
+                        대상 상세: ${policy.tgtr_dtl_cn || '-'}
+                        <br>
+                        선정 기준: ${policy.slct_crit_cn || '-'}
+                        <br>
+                        지원 내용: ${policy.alw_serv_cn || '-'}
                     </small>
                 </div>
                 <div class="policy-actions">
@@ -106,14 +117,18 @@ document.addEventListener('DOMContentLoaded', () => {
             svcfrst_reg_ts: policySvcfrstRegTsInput.value || null,
             trgter_indvdl_array: policyTrgterIndvdlArrayInput.value || null,
             inq_num: policyInqNumInput.value ? parseInt(policyInqNumInput.value, 10) : null,
-            intrs_thema_array: policyIntrsThemaArrayInput.value || null
+            intrs_thema_array: policyIntrsThemaArrayInput.value || null,
+            // 새로 추가된 상세 내용 필드들
+            tgtr_dtl_cn: policyTgtrDtlCnInput.value || null,
+            slct_crit_cn: policySlctCritCnInput.value || null,
+            alw_serv_cn: policyAlwServCnInput.value || null
         };
 
         try {
             let response;
             if (editingPolicyId) {
                 // 수정
-                response = await fetch(`/api/policies/${editingEditingPolicyId}`, {
+                response = await fetch(`/api/policies/${editingPolicyId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(policyData)
@@ -159,6 +174,10 @@ document.addEventListener('DOMContentLoaded', () => {
         policyTrgterIndvdlArrayInput.value = '';
         policyInqNumInput.value = '';
         policyIntrsThemaArrayInput.value = '';
+        // 새로 추가된 상세 내용 필드 초기화
+        policyTgtrDtlCnInput.value = '';
+        policySlctCritCnInput.value = '';
+        policyAlwServCnInput.value = '';
     }
 
     // 정책 수정 모드
@@ -191,6 +210,10 @@ document.addEventListener('DOMContentLoaded', () => {
             policyTrgterIndvdlArrayInput.value = policyToEdit.trgter_indvdl_array || '';
             policyInqNumInput.value = policyToEdit.inq_num || '';
             policyIntrsThemaArrayInput.value = policyToEdit.intrs_thema_array || '';
+            // 새로 추가된 상세 내용 필드 채우기
+            policyTgtrDtlCnInput.value = policyToEdit.tgtr_dtl_cn || '';
+            policySlctCritCnInput.value = policyToEdit.slct_crit_cn || '';
+            policyAlwServCnInput.value = policyToEdit.alw_serv_cn || '';
 
         } else {
             alert('정책을 찾을 수 없습니다.');
